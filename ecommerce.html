@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TechVibe — Next-Gen Tech Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #030305;
+      --bg2: #08080f;
+      --bg3: #0d0d1a;
+      --card: #0a0a14;
+      --border: #1a1a3a;
+      --primary: #00f2ff;
+      --primary-glow: rgba(0, 242, 255, 0.4);
+      --secondary: #7000ff;
+      --accent: #ff007a;
+      --text: #ffffff;
+      --muted: #94a3b8;
+      --red: #ff3333;
+      --green: #00ff88;
+      --radius: 12px;
+      --shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ───── UTILITIES ───── */
+    .hidden { display: none !important; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
+      transition: all .25s; letter-spacing: .4px; text-transform: uppercase;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #000;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 20px var(--primary-glow); }
+    .btn-outline {
+      background: transparent; border: 1.5px solid var(--border); color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
+    .btn-ghost { background: transparent; color: var(--muted); }
+    .btn-ghost:hover { color: var(--primary); }
+    .badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--primary); color: #000; border-radius: 4px;
+      width: 20px; height: 20px; font-size: 11px; font-weight: 700;
+      position: absolute; top: -6px; right: -6px;
+    }
+    input, textarea {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg3); border: 1.5px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 13px 16px;
+      font-size: 14px; outline: none; width: 100%;
+      transition: border-color .2s;
+    }
+    input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
+    input::placeholder { color: var(--muted); }
+    .tag {
+      display: inline-block; padding: 4px 12px; border-radius: 50px;
+      font-size: 12px; font-weight: 600;
+    }
+    .tag-new { background: rgba(0, 242, 255, .15); color: var(--primary); }
+    .tag-sale { background: rgba(224,85,85,.15); color: var(--red); }
+    .toast {
+      position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+      background: var(--card); border: 1.5px solid var(--border);
+      border-left: 4px solid var(--green); border-radius: 12px;
+      padding: 16px 22px; font-size: 14px; font-weight: 500;
+      box-shadow: var(--shadow); max-width: 300px;
+      animation: slideIn .3s ease;
+    }
+    @keyframes slideIn { from { transform: translateX(120px); opacity: 0; } }
+
+    /* ───── LOGIN PAGE ───── */
+    #login-page {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 0% 0%, rgba(0, 242, 255, 0.1) 0%, transparent 40%),
+                  radial-gradient(circle at 100% 100%, rgba(112, 0, 255, 0.1) 0%, transparent 40%),
+                  var(--bg);
+      padding: 20px;
+    }
+    .auth-box {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 48px 40px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 0 50px rgba(0, 242, 255, 0.05);
+      animation: fadeUp .5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-box::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+    @keyframes fadeUp { from { transform: translateY(30px); opacity: 0; } }
+    .auth-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px; color: var(--primary);
+      text-align: center; margin-bottom: 8px;
+    }
+    .auth-logo span { color: var(--text); }
+    .auth-sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 32px; letter-spacing: 1px; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 28px; background: var(--bg3); border-radius: 8px; padding: 4px; }
+    .auth-tab {
+      flex: 1; text-align: center; padding: 10px; border-radius: 6px; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--muted); transition: all .2s;
+    }
+    .auth-tab.active { background: var(--primary); color: #000; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block; }
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 12px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .social-btns { display: flex; gap: 10px; }
+    .social-btn {
+      flex: 1; padding: 11px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--text); cursor: pointer; font-size: 20px;
+      transition: all .2s; text-align: center;
+    }
+    .social-btn:hover { border-color: var(--primary); background: rgba(0, 242, 255, .08); }
+    .forgot { font-size: 12px; color: var(--muted); text-align: right; margin-top: -10px; margin-bottom: 16px; cursor: pointer; }
+    .forgot:hover { color: var(--primary); }
+    #login-err, #reg-err { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
+
+    /* ───── NAVBAR ───── */
+    #app { display: none; flex-direction: column; min-height: 100vh; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px; display: flex; align-items: center; gap: 32px; height: 68px;
+    }
+    .nav-logo { font-family: 'Space Grotesk', sans-serif; font-size: 24px; color: var(--primary); cursor: pointer; font-weight: 700; }
+    .nav-logo span { color: var(--text); }
+    .nav-links { display: flex; gap: 4px; flex: 1; }
+    .nav-link {
+      padding: 8px 16px; border-radius: 8px; color: var(--muted);
+      cursor: pointer; font-size: 14px; font-weight: 500; transition: all .2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--primary); background: rgba(0, 242, 255, 0.05); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .search-wrap { position: relative; }
+    .search-wrap input { width: 220px; padding: 9px 14px 9px 38px; border-radius: 8px; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--border);
+      background: transparent; color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+      transition: all .2s; position: relative;
+    }
+    .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; cursor: pointer; color: #fff;
+      border: 2px solid var(--primary);
+    }
+    .user-menu {
+      position: absolute; top: 54px; right: 0; background: var(--card);
+      border: 1.5px solid var(--border); border-radius: 16px; padding: 8px;
+      min-width: 200px; box-shadow: var(--shadow); z-index: 200;
+    }
+    .user-menu-item {
+      padding: 10px 14px; border-radius: 10px; cursor: pointer;
+      font-size: 14px; transition: background .2s; display: flex; align-items: center; gap: 10px;
+    }
+    .user-menu-item:hover { background: var(--bg3); }
+    .user-menu-item.danger { color: var(--red); }
+
+    /* ───── PAGES ───── */
+    .page { display: none; animation: fadeIn .4s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } }
+
+    /* ───── HOME ───── */
+    .hero {
+      padding: 80px 40px 60px;
+      background: radial-gradient(circle at 20% 50%, rgba(0, 242, 255, 0.08) 0%, transparent 55%),
+                  radial-gradient(circle at 80% 30%, rgba(112, 0, 255, 0.05) 0%, transparent 55%);
+      display: flex; align-items: center; gap: 60px;
+    }
+    .hero-content { flex: 1; }
+    .hero-eyebrow { color: var(--primary); font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.1; margin-bottom: 20px; font-weight: 700;
+    }
+    .hero-title em { font-style: normal; color: var(--primary); text-shadow: 0 0 20px var(--primary-glow); }
+    .hero-sub { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 480px; margin-bottom: 36px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-stats { display: flex; gap: 40px; margin-top: 48px; }
+    .stat { }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 32px; color: var(--primary); font-weight: 700; }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .hero-visual {
+      flex: 0 0 380px; height: 380px; border-radius: 30px;
+      background: linear-gradient(135deg, var(--bg3), var(--bg2));
+      border: 1px solid var(--border); position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-float {
+      font-size: 120px; animation: float 4s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px var(--primary-glow));
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+    .hero-badge {
+      position: absolute; top: 24px; right: 24px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #000; padding: 10px 16px; border-radius: 6px;
+      font-size: 13px; font-weight: 700;
+    }
+    .categories-row {
+      padding: 40px 40px;
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .cat-chip {
+      padding: 10px 20px; border-radius: 8px; border: 1.5px solid var(--border);
+      cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cat-chip:hover, .cat-chip.active {
+      border-color: var(--primary); background: rgba(0, 242, 255, 0.08); color: var(--primary);
+    }
+    .section-header {
+      padding: 0 40px; margin-bottom: 28px;
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; }
+    .see-all { font-size: 13px; color: var(--primary); cursor: pointer; font-weight: 600; }
+    .see-all:hover { text-decoration: underline; }
+
+    /* ───── PRODUCT GRID ───── */
+    .product-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 22px; padding: 0 40px 60px;
+    }
+    .product-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; cursor: pointer;
+      transition: all .28s; position: relative;
+    }
+    .product-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); }
+    .product-img {
+      height: 200px; display: flex; align-items: center; justify-content: center;
+      font-size: 70px; background: var(--bg3);
+      transition: transform .3s;
+    }
+    .product-card:hover .product-img { transform: scale(1.06); }
+    .product-body { padding: 16px; }
+    .product-name { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+    .product-cat { font-size: 12px; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+    .product-price { font-family: 'Space Grotesk', sans-serif; font-size: 20px; color: var(--primary); font-weight: 700; }
+    .product-price-old { font-size: 13px; color: var(--muted); text-decoration: line-through; margin-left: 8px; }
+    .product-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .stars { color: var(--primary); }
+    .wishlist-btn {
+      width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted); cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center; transition: all .2s;
+    }
+    .wishlist-btn.active, .wishlist-btn:hover { color: var(--red); border-color: var(--red); }
+    .card-tags { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; }
+
+    /* ───── SHOP PAGE ───── */
+    .shop-layout { display: flex; gap: 0; }
+    .sidebar {
+      width: 260px; flex-shrink: 0; padding: 32px 28px;
+      border-right: 1px solid var(--border); position: sticky; top: 68px;
+      height: calc(100vh - 68px); overflow-y: auto;
+    }
+    .sidebar-section { margin-bottom: 32px; }
+    .sidebar-title { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 14px; }
+    .filter-option {
+      display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer;
+      font-size: 14px; color: var(--muted); transition: color .2s;
+    }
+    .filter-option:hover { color: var(--text); }
+    .filter-option input[type=checkbox] { width: auto; accent-color: var(--primary); }
+    .price-range { display: flex; flex-direction: column; gap: 10px; }
+    input[type=range] {
+      -webkit-appearance: none; width: 100%; height: 4px;
+      background: linear-gradient(to right, var(--primary) 0%, var(--primary) 60%, var(--border) 60%);
+      border-radius: 4px; outline: none; padding: 0;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 2px;
+      background: var(--primary); cursor: pointer; border: 3px solid var(--bg);
+    }
+    .shop-main { flex: 1; padding: 32px 40px; }
+    .shop-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .results-count { color: var(--muted); font-size: 14px; }
+    .sort-select {
+      background: var(--bg3); border: 1.5px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 9px 14px; font-size: 14px; cursor: pointer;
+      font-family: 'Inter', sans-serif; outline: none; width: auto;
+    }
+
+    /* ───── PRODUCT DETAIL ───── */
+    .product-detail { padding: 40px; display: flex; gap: 60px; align-items: flex-start; }
+    .detail-visual {
+      flex: 0 0 420px; height: 420px; border-radius: 24px;
+      background: var(--bg3); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 130px;
+    }
+    .detail-info { flex: 1; }
+    .detail-cat { font-size: 12px; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 12px; }
+    .detail-name { font-family: 'Space Grotesk', sans-serif; font-size: 36px; line-height: 1.2; margin-bottom: 16px; font-weight: 700; }
+    .detail-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--muted); font-size: 14px; }
+    .detail-price { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; }
+    .detail-price-main { font-family: 'Space Grotesk', sans-serif; font-size: 42px; color: var(--primary); font-weight: 700; }
+    .detail-price-old { font-size: 20px; color: var(--muted); text-decoration: line-through; }
+    .detail-desc { color: var(--muted); line-height: 1.8; margin-bottom: 28px; font-size: 15px; }
+    .detail-options { margin-bottom: 28px; }
+    .options-label { font-size: 13px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .option-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .option-chip {
+      padding: 8px 18px; border-radius: 50px; border: 1.5px solid var(--border);
+      cursor: pointer; font-size: 13px; transition: all .2s;
+    }
+    .option-chip:hover, .option-chip.active { border-color: var(--primary); color: var(--primary); background: rgba(0, 242, 255, 0.08); }
+    .qty-row { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+    .qty-control { display: flex; align-items: center; gap: 0; background: var(--bg3); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .qty-btn {
+      width: 40px; height: 40px; border: none; background: transparent; color: var(--text);
+      cursor: pointer; font-size: 18px; transition: background .2s;
+    }
+    .qty-btn:hover { background: var(--border); }
+    .qty-num { width: 46px; text-align: center; font-weight: 700; font-size: 16px; background: transparent; border: none; padding: 0; }
+    .detail-actions { display: flex; gap: 12px; }
+    .btn-lg { padding: 15px 36px; font-size: 15px; }
+
+    /* ───── CART ───── */
+    .cart-wrap { padding: 40px; max-width: 900px; }
+    .cart-title { font-family: 'Space Grotesk', sans-serif; font-size: 32px; margin-bottom: 32px; font-weight: 700; }
+    .cart-items { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .cart-item {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 20px; display: flex; align-items: center; gap: 20px;
+    }
+    .cart-item-img { font-size: 52px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: var(--bg3); border-radius: 12px; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+    .cart-item-meta { font-size: 13px; color: var(--muted); }
+    .cart-item-price { font-family: 'Space Grotesk', sans-serif; font-size: 20px; color: var(--primary); min-width: 80px; text-align: right; font-weight: 700; }
+    .remove-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 20px; transition: color .2s; }
+    .remove-btn:hover { color: var(--red); }
+    .cart-summary {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 28px;
+    }
+    .cart-sum-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; margin-bottom: 20px; font-weight: 700; }
+    .cart-sum-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .cart-sum-row:last-of-type { border-bottom: none; font-weight: 700; font-size: 16px; }
+    .cart-empty { text-align: center; padding: 80px 40px; color: var(--muted); }
+    .cart-empty-icon { font-size: 80px; margin-bottom: 20px; }
+    .cart-empty h3 { font-family: 'Space Grotesk', sans-serif; font-size: 26px; color: var(--text); margin-bottom: 10px; font-weight: 700; }
+
+    /* ───── FOOTER ───── */
+    footer {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 60px 40px 30px;
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .footer-brand { }
+    .footer-logo { font-family: 'Space Grotesk', sans-serif; font-size: 24px; color: var(--primary); margin-bottom: 14px; font-weight: 700; }
+    .footer-logo span { color: var(--text); }
+    .footer-desc { color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 280px; }
+    .footer-col-title { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
+    .footer-link { display: block; color: var(--muted); font-size: 14px; padding: 5px 0; cursor: pointer; transition: color .2s; }
+    .footer-link:hover { color: var(--primary); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+
+    /* ───── PROFILE ───── */
+    .profile-wrap { padding: 40px; max-width: 700px; }
+    .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 40px; }
+    .profile-avatar-big {
+      width: 80px; height: 80px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; font-weight: 700; color: #fff; border: 3px solid var(--primary);
+    }
+    .profile-name { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; }
+    .profile-email { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .profile-card {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 28px; margin-bottom: 20px;
+    }
+    .profile-card-title { font-weight: 700; font-size: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 16px; gap: 12px; }
+      .search-wrap input { width: 160px; }
+      .hero { flex-direction: column; padding: 40px 20px; }
+      .hero-visual { display: none; }
+      .product-grid { padding: 0 20px 40px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .categories-row, .section-header { padding: 20px; }
+      .shop-layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; }
+      .product-detail { flex-direction: column; padding: 20px; }
+      .detail-visual { flex: none; width: 100%; }
+      .cart-wrap { padding: 20px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ LOGIN PAGE ════════════════ -->
+<div id="login-page">
+  <div class="auth-box">
+    <div class="auth-logo">Tech<span>Vibe</span></div>
+    <div class="auth-sub">Access the Future of Technology ⚡</div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+      <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="login-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+      <div class="forgot">Forgot Password?</div>
+      <button class="btn btn-primary" style="width:100%;padding:14px" onclick="doLogin()">Authorize Access</button>
+      <div id="login-err">❌ Invalid email or password.</div>
+      <div class="divider">or continue with</div>
+      <div class="social-btns">
+        <div class="social-btn" onclick="guestLogin()" title="Google">🔍</div>
+        <div class="social-btn" onclick="guestLogin()" title="Facebook">📘</div>
+        <div class="social-btn" onclick="guestLogin()" title="Apple">🍎</div>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form" class="hidden">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" id="reg-first" placeholder="Ali" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" id="reg-last" placeholder="Ahmed" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="reg-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="reg-pass" placeholder="Min. 6 characters" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" id="reg-pass2" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:14px" onclick="doRegister()">Initialize Account</button>
+      <div id="reg-err">❌ Please fill all fields correctly.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ MAIN APP ════════════════ -->
+<div id="app">
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-logo" onclick="goPage('home')">Tech<span>Vibe</span></div>
+    <div class="nav-links">
+      <div class="nav-link active" onclick="goPage('home')">Home</div>
+      <div class="nav-link" onclick="goPage('shop')">Shop</div>
+      <div class="nav-link" onclick="goPage('cart')">Cart</div>
+      <div class="nav-link" onclick="goPage('profile')">Profile</div>
+    </div>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search products…" oninput="doSearch(this.value)" />
+      </div>
+      <button class="icon-btn" onclick="goPage('cart')" style="position:relative">
+        🛒 <span class="badge" id="cart-count">0</span>
+      </button>
+      <div style="position:relative">
+        <div class="user-avatar" id="user-avatar-btn" onclick="toggleUserMenu()"></div>
+        <div class="user-menu hidden" id="user-menu">
+          <div class="user-menu-item" onclick="goPage('profile');toggleUserMenu()">👤 My Profile</div>
+          <div class="user-menu-item" onclick="goPage('cart');toggleUserMenu()">🛒 My Cart</div>
+          <div class="user-menu-item" onclick="goPage('orders');toggleUserMenu()">📦 Orders</div>
+          <div class="user-menu-item danger" onclick="logout()">🚪 Logout</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-eyebrow">✦ Protocol 2025: Live</div>
+        <h1 class="hero-title">Upgrade Your <em>Reality</em><br>With Next-Gen Tech</h1>
+        <p class="hero-sub">The ultimate hub for elite electronics, cyberware aesthetics, and high-performance hardware. Engineering the future, today.</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary btn-lg" onclick="goPage('shop')">Explore Shop →</button>
+          <button class="btn btn-outline btn-lg">System Specs</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Active Nodes</div></div>
+          <div class="stat"><div class="stat-num">1200+</div><div class="stat-label">Artifacts</div></div>
+          <div class="stat"><div class="stat-num">99%</div><div class="stat-label">Uptime</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-float">⚡</div>
+        <div class="hero-badge">⚡ Overclocked</div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="categories-row">
+      <div class="cat-chip active" onclick="filterCat('all',this)">🌐 All</div>
+      <div class="cat-chip" onclick="filterCat('electronics',this)">💻 Electronics</div>
+      <div class="cat-chip" onclick="filterCat('fashion',this)">👗 Fashion</div>
+      <div class="cat-chip" onclick="filterCat('home',this)">🏠 Home</div>
+      <div class="cat-chip" onclick="filterCat('sports',this)">🔋 Power</div>
+      <div class="cat-chip" onclick="filterCat('beauty',this)">🧬 BioTech</div>
+    </div>
+
+    <!-- Featured Products -->
+    <div class="section-header">
+      <h2 class="section-title">Featured Products</h2>
+      <span class="see-all" onclick="goPage('shop')">See All →</span>
+    </div>
+    <div class="product-grid" id="featured-grid"></div>
+
+    <!-- On Sale -->
+    <div class="section-header">
+      <h2 class="section-title">🔥 On Sale</h2>
+      <span class="see-all" onclick="goPage('shop')">See All →</span>
+    </div>
+    <div class="product-grid" id="sale-grid"></div>
+
+    <footer>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">Tech<span>Vibe</span></div>
+          <div class="footer-desc">Your ultimate hub for next-gen technology, hardware, and digital lifestyle artifacts.</div>
+        </div>
+        <div>
+          <div class="footer-col-title">Shop</div>
+          <a class="footer-link">Electronics</a>
+          <a class="footer-link">Fashion</a>
+          <a class="footer-link">Home & Living</a>
+          <a class="footer-link">Sports</a>
+        </div>
+        <div>
+          <div class="footer-col-title">Support</div>
+          <a class="footer-link">Help Center</a>
+          <a class="footer-link">Track Order</a>
+          <a class="footer-link">Returns</a>
+          <a class="footer-link">Contact Us</a>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <a class="footer-link">About Us</a>
+          <a class="footer-link">Blog</a>
+          <a class="footer-link">Careers</a>
+          <a class="footer-link">Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2025 TechVibe. System Integrated.</div>
+        <div>Engineered with ⚡</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- SHOP PAGE -->
+  <div class="page" id="page-shop">
+    <div class="shop-layout">
+      <div class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-title">Category</div>
+          <div class="filter-option"><input type="checkbox" onchange="applyFilters()" class="cat-filter" value="electronics" checked> Electronics</div>
+          <div class="filter-option"><input type="checkbox" onchange="applyFilters()" class="cat-filter" value="fashion" checked> Fashion</div>
+          <div class="filter-option"><input type="checkbox" onchange="applyFilters()" class="cat-filter" value="home" checked> Home & Living</div>
+          <div class="filter-option"><input type="checkbox" onchange="applyFilters()" class="cat-filter" value="sports" checked> Sports</div>
+          <div class="filter-option"><input type="checkbox" onchange="applyFilters()" class="cat-filter" value="beauty" checked> Beauty</div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-title">Price Range</div>
+          <div class="price-range">
+            <input type="range" min="0" max="500" value="500" oninput="updatePrice(this.value)" id="price-slider" />
+            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)">
+              <span>$0</span><span id="price-label">$500</span>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-title">Rating</div>
+          <div class="filter-option"><input type="radio" name="rating" value="0" checked onchange="applyFilters()"> All Ratings</div>
+          <div class="filter-option"><input type="radio" name="rating" value="4" onchange="applyFilters()"> ⭐ 4+ Stars</div>
+          <div class="filter-option"><input type="radio" name="rating" value="4.5" onchange="applyFilters()"> ⭐ 4.5+ Stars</div>
+        </div>
+      </div>
+      <div class="shop-main">
+        <div class="shop-topbar">
+          <div class="results-count" id="results-count">Showing all products</div>
+          <select class="sort-select" onchange="applySortFilter(this.value)">
+            <option value="default">Sort: Default</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Best Rating</option>
+            <option value="name">Name A-Z</option>
+          </select>
+        </div>
+        <div class="product-grid" id="shop-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT DETAIL PAGE -->
+  <div class="page" id="page-detail">
+    <div class="product-detail" id="detail-content"></div>
+  </div>
+
+  <!-- CART PAGE -->
+  <div class="page" id="page-cart">
+    <div class="cart-wrap">
+      <h1 class="cart-title">🛒 My Cart</h1>
+      <div id="cart-content"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="profile-wrap">
+      <div class="profile-header">
+        <div class="profile-avatar-big" id="profile-avatar-big"></div>
+        <div>
+          <div class="profile-name" id="profile-name-big"></div>
+          <div class="profile-email" id="profile-email-big"></div>
+          <div style="margin-top:8px"><span class="tag tag-new">⭐ Premium Member</span></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-card-title">✏️ Personal Information</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group"><label class="form-label">First Name</label><input type="text" id="p-first" /></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input type="text" id="p-last" /></div>
+          <div class="form-group" style="grid-column:1/-1"><label class="form-label">Email</label><input type="email" id="p-email" /></div>
+          <div class="form-group" style="grid-column:1/-1"><label class="form-label">Phone</label><input type="tel" id="p-phone" placeholder="+1 234 567 8900" /></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px" onclick="saveProfile()">Sync Profile</button>
+      </div>
+      <div class="profile-card">
+        <div class="profile-card-title">📦 Recent Orders</div>
+        <div id="orders-list">
+          <div style="color:var(--muted);font-size:14px">No orders yet. Start shopping! 🛍️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast hidden" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const PRODUCTS = [
+  { id:1, name:'Quantum Laptop X1', cat:'electronics', price:1299, old:1499, rating:4.8, reviews:240, emoji:'💻', tags:['sale'], desc:'Neural-link ready laptop with 32GB RAM, 1TB NVMe, and holographic display support.' },
+  { id:2, name:'Neural Earbuds v2', cat:'electronics', price:199, old:null, rating:4.6, reviews:180, emoji:'🎧', tags:['new'], desc:'Lossless spatial audio with active brainwave isolation. 48-hour battery life.' },
+  { id:3, name:'Cyber Watch Pro', cat:'electronics', price:349, old:399, rating:4.7, reviews:312, emoji:'⌚', tags:['sale'], desc:'Vitals monitoring, GPS, and AR overlay sync in a titanium frame.' },
+  { id:4, name:'8K Vision Cam', cat:'electronics', price:899, old:null, rating:4.9, reviews:95, emoji:'📷', tags:['new'], desc:'Capture hyper-realistic 8K video with AI-enhanced focus and low-light sensor.' },
+  { id:5, name:'Neon-Grid Jacket', cat:'fashion', price:249, old:299, rating:4.5, reviews:67, emoji:'🧥', tags:['sale'], desc:'Adaptive climate control with programmable LED piping and water-repellent mesh.' },
+  { id:6, name:'Gravity Runners', cat:'power', price:180, old:null, rating:4.7, reviews:204, emoji:'👟', tags:['new'], desc:'Kinetic energy recovery system with carbon-fiber suspension for peak agility.' },
+  { id:7, name:'Aero-Mesh Dress', cat:'fashion', price:120, old:150, rating:4.4, reviews:53, emoji:'👗', tags:['sale'], desc:'Liquid-light fabric that adapts to ambient temperature and movement.' },
+  { id:8, name:'Nano-Grip Mat', cat:'power', price:75, old:null, rating:4.8, reviews:418, emoji:'🧘', tags:['new'], desc:'Molecular-bond surface for zero slip, featuring integrated biometric sensors.' },
+  { id:9, name:'Holo-Diffuser', cat:'home', price:65, old:null, rating:4.6, reviews:87, emoji:'🕯️', tags:['new'], desc:'Ultrasonic scent dispersal with 3D light projection for sensory immersion.' },
+  { id:10, name:'Sonic Orb Speaker', cat:'electronics', price:249, old:299, rating:4.5, reviews:156, emoji:'🔊', tags:['sale'], desc:'Omni-directional audio with neural-assistant integration and anti-gravity base.' },
+  { id:11, name:'Bio-Regen Kit', cat:'biotech', price:129, old:159, rating:4.7, reviews:230, emoji:'💆', tags:['sale'], desc:'Advanced cellular repair serum with nano-peptide technology and UV shield.' },
+  { id:12, name:'Thermal Cloud Blanket', cat:'home', price:85, old:null, rating:4.9, reviews:511, emoji:'🛋️', tags:['new'], desc:'Smart-heat regulation with memory-cloud texture for ultimate recovery.' },
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentUser = null;
+let cart = [];
+let wishlist = [];
+let priceLimit = 500;
+let sortMode = 'default';
+let filteredProducts = [...PRODUCTS];
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('login-form').classList.toggle('hidden', tab!=='login');
+  document.getElementById('register-form').classList.toggle('hidden', tab!=='register');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if (!email || !pass || pass.length < 4) { err.style.display='block'; return; }
+  err.style.display = 'none';
+  const name = email.split('@')[0];
+  loginUser({ email, firstName: name, lastName: '' });
+}
+
+function doRegister() {
+  const first = document.getElementById('reg-first').value.trim();
+  const last = document.getElementById('reg-last').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const err = document.getElementById('reg-err');
+  if (!first || !email || pass.length < 6 || pass !== pass2) { err.style.display='block'; return; }
+  err.style.display = 'none';
+  loginUser({ email, firstName: first, lastName: last });
+}
+
+function guestLogin() {
+  loginUser({ email: 'guest@techvibe.ai', firstName: 'Guest', lastName: 'Node' });
+}
+
+function loginUser(user) {
+  currentUser = user;
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  const init = user.firstName.charAt(0).toUpperCase() + (user.lastName.charAt(0)||'').toUpperCase();
+  document.getElementById('user-avatar-btn').textContent = init;
+  document.getElementById('profile-avatar-big').textContent = init;
+  document.getElementById('profile-name-big').textContent = user.firstName + ' ' + user.lastName;
+  document.getElementById('profile-email-big').textContent = user.email;
+  document.getElementById('p-first').value = user.firstName;
+  document.getElementById('p-last').value = user.lastName;
+  document.getElementById('p-email').value = user.email;
+  renderFeatured(); renderSale(); renderShop();
+}
+
+function logout() {
+  currentUser = null; cart = []; wishlist = [];
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+  updateCartBadge();
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const idx = {home:0, shop:1, cart:2, profile:3}[name];
+  if (idx !== undefined) document.querySelectorAll('.nav-link')[idx].classList.add('active');
+  if (name === 'cart') renderCart();
+  if (name === 'shop') { renderShop(); }
+  window.scrollTo(0, 0);
+  const um = document.getElementById('user-menu');
+  if (!um.classList.contains('hidden')) um.classList.add('hidden');
+}
+
+function toggleUserMenu() {
+  document.getElementById('user-menu').classList.toggle('hidden');
+}
+
+// ══════════════════════════════════════════
+// RENDER HELPERS
+// ══════════════════════════════════════════
+function stars(r) {
+  return '★'.repeat(Math.floor(r)) + (r%1>=0.5?'½':'') ;
+}
+
+function productCardHTML(p) {
+  const inWish = wishlist.includes(p.id);
+  return `
+    <div class="product-card" onclick="openDetail(${p.id})">
+      <div class="card-tags">
+        ${p.tags.includes('new') ? '<span class="tag tag-new">NEW</span>' : ''}
+        ${p.tags.includes('sale') ? '<span class="tag tag-sale">SALE</span>' : ''}
+      </div>
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-body">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-rating">
+          <span class="stars">${stars(p.rating)}</span>
+          ${p.rating} (${p.reviews})
+        </div>
+        <div class="product-footer">
+          <div>
+            <span class="product-price">$${p.price}</span>
+            ${p.old ? `<span class="product-price-old">$${p.old}</span>` : ''}
+          </div>
+          <button class="wishlist-btn ${inWish?'active':''}" onclick="event.stopPropagation();toggleWishlist(${p.id},this)">♡</button>
+        </div>
+        <button class="btn btn-gold" style="width:100%;margin-top:12px;padding:10px" onclick="event.stopPropagation();addToCart(${p.id})">Add to Cart</button>
+      </div>
+    </div>`;
+}
+
+function renderFeatured() {
+  const top = PRODUCTS.sort((a,b)=>b.rating-a.rating).slice(0,4);
+  document.getElementById('featured-grid').innerHTML = top.map(productCardHTML).join('');
+}
+function renderSale() {
+  const sale = PRODUCTS.filter(p=>p.tags.includes('sale')).slice(0,4);
+  document.getElementById('sale-grid').innerHTML = sale.map(productCardHTML).join('');
+}
+function renderShop() {
+  let products = [...filteredProducts];
+  if (sortMode === 'price-low') products.sort((a,b)=>a.price-b.price);
+  else if (sortMode === 'price-high') products.sort((a,b)=>b.price-a.price);
+  else if (sortMode === 'rating') products.sort((a,b)=>b.rating-a.rating);
+  else if (sortMode === 'name') products.sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('shop-grid').innerHTML = products.map(productCardHTML).join('');
+  document.getElementById('results-count').textContent = `Showing ${products.length} product${products.length===1?'':'s'}`;
+}
+
+// ══════════════════════════════════════════
+// FILTERS / SEARCH
+// ══════════════════════════════════════════
+function filterCat(cat, el) {
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  filteredProducts = cat === 'all' ? [...PRODUCTS] : PRODUCTS.filter(p=>p.cat===cat);
+  document.getElementById('featured-grid').innerHTML = filteredProducts.slice(0,4).map(productCardHTML).join('');
+}
+
+function applyFilters() {
+  const checked = [...document.querySelectorAll('.cat-filter:checked')].map(c=>c.value);
+  const minRating = parseFloat(document.querySelector('input[name=rating]:checked').value);
+  filteredProducts = PRODUCTS.filter(p =>
+    checked.includes(p.cat) && p.price <= priceLimit && p.rating >= minRating
+  );
+  renderShop();
+}
+
+function updatePrice(v) {
+  priceLimit = parseInt(v);
+  document.getElementById('price-label').textContent = '$' + v;
+  applyFilters();
+}
+
+function applySortFilter(v) { sortMode = v; renderShop(); }
+
+function doSearch(q) {
+  q = q.toLowerCase();
+  filteredProducts = PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q)
+  );
+  goPage('shop'); renderShop();
+}
+
+// ══════════════════════════════════════════
+// PRODUCT DETAIL
+// ══════════════════════════════════════════
+function openDetail(id) {
+  const p = PRODUCTS.find(x=>x.id===id);
+  const sizes = p.cat==='fashion'||p.cat==='sports' ? `
+    <div class="detail-options">
+      <div class="options-label">Size</div>
+      <div class="option-chips">
+        <div class="option-chip active">XS</div>
+        <div class="option-chip">S</div>
+        <div class="option-chip">M</div>
+        <div class="option-chip">L</div>
+        <div class="option-chip">XL</div>
+      </div>
+    </div>` : '';
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-visual">${p.emoji}</div>
+    <div class="detail-info">
+      <div class="detail-cat">${p.cat}</div>
+      <h1 class="detail-name">${p.name}</h1>
+      <div class="detail-rating">
+        <span class="stars" style="font-size:18px">${stars(p.rating)}</span>
+        <span>${p.rating}</span>
+        <span>(${p.reviews} reviews)</span>
+        ${p.tags.includes('new')?'<span class="tag tag-new">NEW</span>':''}
+        ${p.tags.includes('sale')?'<span class="tag tag-sale">SALE</span>':''}
+      </div>
+      <div class="detail-price">
+        <span class="detail-price-main">$${p.price}</span>
+        ${p.old?`<span class="detail-price-old">$${p.old}</span><span class="tag tag-sale">${Math.round((1-p.price/p.old)*100)}% OFF</span>`:''}
+      </div>
+      <p class="detail-desc">${p.desc}</p>
+      ${sizes}
+      <div class="qty-row">
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qty-num">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <span style="color:var(--green);font-size:14px">✓ In Stock</span>
+      </div>
+      <div class="detail-actions">
+        <button class="btn btn-gold btn-lg" onclick="addToCartDetail(${p.id})">🛒 Add to Cart</button>
+        <button class="btn btn-outline btn-lg" onclick="toggleWishlist(${p.id}, this); this.textContent=wishlist.includes(${p.id})?'❤️ Saved':'♡ Wishlist'">♡ Wishlist</button>
+      </div>
+    </div>`;
+  goPage('detail');
+  document.querySelectorAll('.option-chip').forEach(c => {
+    c.onclick = () => { document.querySelectorAll('.option-chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); };
+  });
+}
+
+let detailQty = 1;
+function changeQty(d) {
+  detailQty = Math.max(1, Math.min(10, detailQty + d));
+  document.getElementById('qty-num').textContent = detailQty;
+}
+function addToCartDetail(id) {
+  for (let i=0; i<detailQty; i++) addToCart(id, true);
+  showToast(`Added ${detailQty}× to cart! 🛒`);
+  detailQty = 1;
+  if (document.getElementById('qty-num')) document.getElementById('qty-num').textContent = '1';
+}
+
+// ══════════════════════════════════════════
+// CART
+// ══════════════════════════════════════════
+function addToCart(id, silent=false) {
+  const existing = cart.find(c=>c.id===id);
+  if (existing) existing.qty++;
+  else cart.push({ id, qty: 1 });
+  updateCartBadge();
+  if (!silent) showToast('Added to cart! 🛒');
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c=>c.id!==id);
+  updateCartBadge(); renderCart();
+}
+
+function changeCartQty(id, d) {
+  const item = cart.find(c=>c.id===id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + d);
+  renderCart();
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cart-count').textContent = total;
+}
+
+function renderCart() {
+  const el = document.getElementById('cart-content');
+  if (cart.length === 0) {
+    el.innerHTML = `<div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <h3>Your cart is empty</h3>
+      <p>Looks like you haven't added anything yet.</p>
+      <button class="btn btn-gold" style="margin-top:20px" onclick="goPage('shop')">Start Shopping →</button>
+    </div>`;
+    return;
+  }
+  const subtotal = cart.reduce((s,c)=>{
+    const p = PRODUCTS.find(x=>x.id===c.id);
+    return s + p.price * c.qty;
+  },0);
+  const shipping = subtotal > 100 ? 0 : 9.99;
+  const tax = subtotal * 0.08;
+  const total = subtotal + shipping + tax;
+
+  el.innerHTML = `
+    <div class="cart-items">
+      ${cart.map(c => {
+        const p = PRODUCTS.find(x=>x.id===c.id);
+        return `<div class="cart-item">
+          <div class="cart-item-img">${p.emoji}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${p.name}</div>
+            <div class="cart-item-meta">${p.cat} • $${p.price} each</div>
+            <div class="qty-control" style="margin-top:10px;display:inline-flex">
+              <button class="qty-btn" onclick="changeCartQty(${p.id},-1)">−</button>
+              <span class="qty-num">${c.qty}</span>
+              <button class="qty-btn" onclick="changeCartQty(${p.id},1)">+</button>
+            </div>
+          </div>
+          <div class="cart-item-price">$${(p.price*c.qty).toFixed(2)}</div>
+          <button class="remove-btn" onclick="removeFromCart(${p.id})">🗑</button>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="cart-summary">
+      <div class="cart-sum-title">Order Summary</div>
+      <div class="cart-sum-row"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+      <div class="cart-sum-row"><span>Shipping</span><span>${shipping===0?'<span style="color:var(--green)">FREE</span>':'$'+shipping.toFixed(2)}</span></div>
+      <div class="cart-sum-row"><span>Tax (8%)</span><span>$${tax.toFixed(2)}</span></div>
+      <div class="cart-sum-row"><span>Total</span><span style="color:var(--gold)">$${total.toFixed(2)}</span></div>
+      <button class="btn btn-gold btn-lg" style="width:100%;margin-top:20px" onclick="checkout()">Proceed to Checkout →</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:10px" onclick="goPage('shop')">Continue Shopping</button>
+    </div>`;
+}
+
+function checkout() {
+  if (cart.length === 0) return;
+  cart = [];
+  updateCartBadge();
+  showToast('🎉 Order placed! Thank you for shopping.');
+  setTimeout(()=>{ renderCart(); }, 500);
+}
+
+// ══════════════════════════════════════════
+// WISHLIST
+// ══════════════════════════════════════════
+function toggleWishlist(id, btn) {
+  if (wishlist.includes(id)) {
+    wishlist = wishlist.filter(x=>x!==id);
+    if (btn) btn.classList.remove('active');
+  } else {
+    wishlist.push(id);
+    if (btn) btn.classList.add('active');
+    showToast('Added to wishlist! ❤️');
+  }
+}
+
+// ══════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════
+function saveProfile() {
+  const first = document.getElementById('p-first').value;
+  const last = document.getElementById('p-last').value;
+  if (currentUser) {
+    currentUser.firstName = first;
+    currentUser.lastName = last;
+    document.getElementById('profile-name-big').textContent = first + ' ' + last;
+    const init = first.charAt(0).toUpperCase() + (last.charAt(0)||'').toUpperCase();
+    document.getElementById('user-avatar-btn').textContent = init;
+    document.getElementById('profile-avatar-big').textContent = init;
+  }
+  showToast('Profile updated! ✅');
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.add('hidden'), 2800);
+}
+
+// Close user menu on outside click
+document.addEventListener('click', e => {
+  const um = document.getElementById('user-menu');
+  const btn = document.getElementById('user-avatar-btn');
+  if (!um.contains(e.target) && !btn.contains(e.target)) um.classList.add('hidden');
+});
+</script>
+</body>
+</html>
